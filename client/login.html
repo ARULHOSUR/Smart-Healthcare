@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HMS | Secure Login</title>
+<link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+
+<!-- 3D Background -->
+<div class="scene">
+    <div class="cube"></div>
+</div>
+
+<!-- Hero Section -->
+<div class="hero">
+    <h1>
+        Hospital<br>
+        Management<br>
+        System
+    </h1>
+    <p>Smart • Secure • Digital Healthcare</p>
+
+    <!-- IMPORTANT: ID must match JS -->
+    <button id="openLogin">Enter System</button>
+</div>
+
+<!-- Login Panel -->
+<div class="login-panel" id="loginPanel">
+
+    <h2>Secure Login</h2>
+
+    <!-- MUST be email (matches backend + JS) -->
+    <input type="email" id="email" placeholder="Email" required>
+
+    <input type="password" id="password" placeholder="Password" required>
+
+    <!-- CAPTCHA -->
+    <div class="captcha">
+        <span id="captchaText"></span>
+        <button type="button" onclick="generateCaptcha()">↻</button>
+    </div>
+
+    <input type="text" id="captchaInput" placeholder="Enter Captcha" required>
+
+    <!-- ERROR MESSAGE -->
+    <div id="error" style="color:#ff6b6b; margin-bottom:10px;"></div>
+
+    <!-- LOGIN BUTTON -->
+    <button type="button" onclick="login()">Login</button>
+
+</div>
+
+<!-- JS MUST BE AT END -->
+<script src="login.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <script>
+function openDoctors() {
+    window.location.href = "doctors.html";
+}
+
+function openPatients() {
+    window.location.href = "patients.html";
+}
+
+function openAppointments() {
+    window.location.href = "appointments.html";
+}
+
+function openBilling() {
+    window.location.href = "billing.html";
+}
+</script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+        }
+
+        .navbar {
+            background: #1976d2;
+            color: white;
+            padding: 15px;
+            font-size: 20px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .card h2 {
+            margin: 10px 0;
+        }
+
+        .logout {
+            float: right;
+            background: red;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    Hospital Management System - Admin
+    <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+    <h2>Welcome, Admin 👋</h2>
+
+    <div class="cards">
+        <div class="card">
+            <h2>Doctors</h2>
+            <p>Manage doctors</p>
+        </div>
+<h2>Welcome, <span id="username"></span> 👋</h2>
+
+        <div class="card">
+            <h2>Patients</h2>
+            <p>View patients</p>
+        </div>
+
+        <div class="card">
+            <h2>Appointments</h2>
+            <p>Manage appointments</p>
+        </div>
+
+        <div class="card">
+            <h2>Billing</h2>
+            <p>View billing</p>
+        </div>
+    </div>
+</div>
+
+<script>
+function logout() {
+    window.location.href = "login.html";
+}
+</script>
+<script>
+let user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+    window.location.href = "login.html";
+}
+
+document.getElementById("username").innerText = user.name;
+
+function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+}
+</script>
+<script>
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "ADMIN") {
+        window.location.replace("login.html");
+    }
+</script>
+
+
+
+</body>
+</html>

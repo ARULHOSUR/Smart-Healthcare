@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Dashboard</title>
+
+    <!-- Bootstrap (required for modal) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body { font-family: Arial; margin: 0; background: #f4f6f9; }
+        .navbar { background: #6a1b9a; color: white; padding: 15px; font-size: 20px; }
+        .logout { float: right; background: red; color: white; border: none; padding: 8px; cursor: pointer; }
+        .container { padding: 20px; }
+        .card { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #eee;
+        }
+        button.book {
+            background: #6a1b9a;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<!-- BOOKING MODAL (STEP 5) -->
+<div class="modal fade" id="bookingModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5>Book Appointment</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="doctorId">
+
+        <label>Doctor</label>
+        <input id="doctorName" class="form-control mb-2" disabled>
+
+        <label>Date</label>
+        <input type="date" id="appointmentDate" class="form-control mb-2">
+
+        <label>Slot</label>
+        <select id="slotSelect" class="form-select mb-3"></select>
+
+        <button class="btn btn-success w-100" onclick="bookAppointment()">
+          Confirm Booking
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<body>
+
+<div class="navbar">
+    Patient Dashboard
+    <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+    <h2>Welcome, <span id="username"></span> 🧑‍🦱</h2>
+
+    <div class="card">
+        My Appointments
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Doctor</th>
+                    <th>Slot</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="myAppointmentsTable"></tbody>
+        </table>
+    </div>
+
+    <div class="card">Prescriptions</div>
+    <div class="card">Lab Reports</div>
+
+    <!-- AVAILABLE DOCTORS -->
+    <h5>Available Doctors</h5>
+    <table>
+        <thead>
+            <tr>
+                <th>Doctor Name</th>
+                <th>Specialization</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="doctorsTable"></tbody>
+    </table>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+/* 🔐 AUTH CHECK */
+const user = JSON.parse(localStorage.getItem("user"));
+if (!user || user.role !== "PATIENT") {
+    window.location.replace("login.html");
+}
+document.getElementById("username").innerText = user.name;
+
+/* 🚪 LOGOUT */
+function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+}
+
+/* 🩺 STEP 2: FETCH DOCTORS */
+fetch("http://localhost:9091/api/doctors", {
+    headers: {
+        "Authorization": "Bearer " + localStorage.getItem("token")
+    }
+})
+.then(res => res.json())
+.then(doctors => {
+    const table = document.getElementById("doctorsTable");
+    table.innerHTML = "";
+
+    doctors.forEach(d => {
+        table.innerHTML += `
+            <tr>
+                <td>${d.name}</td>
+                <td>${d.specialization}</td>
+                <td>
+                    <button class="book" onclick="selectDoctor(${d.id}, '${d.name}')">
+                        Book Appointment
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+})
+.catch(() => alert("Failed to load doctors"));
+
+/* 👉 STEP 5: OPEN MODAL + LOAD SLOTS */
+function selectDoctor(id, name) {
+    document.getElementById("doctorId").value = id;
+    document.getElementById("doctorName").value = name;
+
+    fetch(`http://localhost:9091/api/doctors/${id}/slots`, {
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        }
+    })
+    .then(res => res.json())
+    .then(slots => {
+        const slotSelect = document.getElementById("slotSelect");
+        slotSelect.innerHTML = "";
+        slots.forEach(slot => {
+            slotSelect.innerHTML += `<option value="${slot}">${slot}</option>`;
+        });
+    });
+
+    new bootstrap.Modal(document.getElementById("bookingModal")).show();
+}
+
+/* ✅ CONFIRM APPOINTMENT */
+function bookAppointment() {
+    const data = {
+        patientId: user.id,
+        doctorId: document.getElementById("doctorId").value,
+        date: document.getElementById("appointmentDate").value,
+        slot: document.getElementById("slotSelect").value
+    };
+
+    fetch("http://localhost:9091/api/appointments", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Booking failed");
+        alert("Appointment booked successfully");
+        location.reload();
+    })
+    .catch(err => alert(err.message));
+}
+</script>
+
+</body>
+</html>
