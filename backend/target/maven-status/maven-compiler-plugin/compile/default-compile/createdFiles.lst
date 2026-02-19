@@ -1,5 +1,6 @@
 com\hms\entity\EMR.class
 com\hms\repository\LabOrderRepository.class
+com\hms\controller\LoginController.class
 com\hms\entity\Encounter.class
 com\hms\controller\DoctorController.class
 com\hms\controller\PharmacyController.class
@@ -14,7 +15,9 @@ com\hms\repository\DiagnosisRepository.class
 com\hms\security\SecurityConfig.class
 com\hms\security\JwtProperties.class
 com\hms\entity\LabOrder.class
+com\hms\service\UserService.class
 com\hms\dto\MedicineRequest.class
+com\hms\config\WebCorsConfig.class
 com\hms\repository\PrescriptionRepository.class
 com\hms\entity\User.class
 com\hms\entity\Staff.class
@@ -22,6 +25,7 @@ com\hms\HospitalManagementSystemApplication.class
 com\hms\controller\PatientController.class
 com\hms\repository\EMRRepository.class
 com\hms\dto\StaffRequest.class
+com\hms\entity\AppointmentRequest.class
 com\hms\dto\BillingRequest.class
 com\hms\entity\Patient.class
 com\hms\repository\PatientRepository.class

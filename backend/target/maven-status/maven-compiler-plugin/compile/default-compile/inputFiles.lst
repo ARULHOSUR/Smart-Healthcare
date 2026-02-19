@@ -23,6 +23,7 @@ C:\Users\ARULHOSUR\OneDrive\Desktop\hms-fullstack\hms-fullstack\backend\src\main
 C:\Users\ARULHOSUR\OneDrive\Desktop\hms-fullstack\hms-fullstack\backend\src\main\java\com\hms\dto\UserCreateRequest.java
 C:\Users\ARULHOSUR\OneDrive\Desktop\hms-fullstack\hms-fullstack\backend\src\main\java\com\hms\dto\UserStatusRequest.java
 C:\Users\ARULHOSUR\OneDrive\Desktop\hms-fullstack\hms-fullstack\backend\src\main\java\com\hms\entity\Appointment.java
+C:\Users\ARULHOSUR\OneDrive\Desktop\hms-fullstack\hms-fullstack\backend\src\main\java\com\hms\entity\AppointmentRequest.java
 C:\Users\ARULHOSUR\OneDrive\Desktop\hms-fullstack\hms-fullstack\backend\src\main\java\com\hms\entity\Billing.java
 C:\Users\ARULHOSUR\OneDrive\Desktop\hms-fullstack\hms-fullstack\backend\src\main\java\com\hms\entity\Diagnosis.java
 C:\Users\ARULHOSUR\OneDrive\Desktop\hms-fullstack\hms-fullstack\backend\src\main\java\com\hms\entity\Doctor.java

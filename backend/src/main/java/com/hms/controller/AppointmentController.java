@@ -9,7 +9,6 @@ import com.hms.repository.DoctorRepository;
 import com.hms.repository.PatientRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -37,15 +36,17 @@ public class AppointmentController {
 
     @PostMapping
     public Appointment create(@RequestBody AppointmentRequest in) {
+
         Appointment a = new Appointment();
 
-        // Entities store date as String → format incoming LocalDate
-        String iso = (in.date != null) ? in.date.format(DateTimeFormatter.ISO_DATE) : null;
-        a.setDate(iso);
-        a.setStatus(in.status);
+        // Directly store date string (no LocalDate parsing)
+        a.setDate(in.getDate());
 
-        Doctor d = doctorRepo.findById(in.doctorId).orElseThrow();
-        Patient p = patientRepo.findById(in.patientId).orElseThrow();
+        // Set default status
+        a.setStatus("PENDING");
+
+        Doctor d = doctorRepo.findById(in.getDoctorId()).orElseThrow();
+        Patient p = patientRepo.findById(in.getPatientId()).orElseThrow();
 
         a.setDoctor(d);
         a.setPatient(p);

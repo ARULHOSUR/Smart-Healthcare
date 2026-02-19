@@ -1,12 +1,17 @@
 package com.hms.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.LocalDate;
-
 public class AppointmentRequest {
-    @JsonFormat(pattern = "dd-MM-yyyy")   // <-- frontend sends 20-11-2025
-    public LocalDate date;
-    public String status;
-    public Long doctorId;
-    public Long patientId;
+
+    private Long doctorId;
+    private Long patientId;
+    private String date;
+
+    public Long getDoctorId() { return doctorId; }
+    public void setDoctorId(Long doctorId) { this.doctorId = doctorId; }
+
+    public Long getPatientId() { return patientId; }
+    public void setPatientId(Long patientId) { this.patientId = patientId; }
+
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
 }
