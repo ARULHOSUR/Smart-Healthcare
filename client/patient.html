@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Portal | Smart Healthcare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+            background:
+                radial-gradient(circle at 12% 14%, #f8fcff 0%, #e9f5ff 28%, rgba(233, 245, 255, 0) 55%),
+                radial-gradient(circle at 88% 82%, #e2f2ff 0%, #d6ecff 24%, rgba(214, 236, 255, 0) 52%),
+                linear-gradient(145deg, #fbfeff 0%, #edf7ff 44%, #f3faff 100%);
+            color: #213251;
+        }
+
+        .scene {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            perspective: 1400px;
+            z-index: 0;
+            pointer-events: none;
+            transform-style: preserve-3d;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.34;
+            animation: float 16s infinite ease-in-out;
+            filter: blur(0.4px);
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, rgba(159,230,255,0.9), rgba(111,176,255,0.55));
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            top: -10%;
+            left: -5%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, rgba(190,242,241,0.9), rgba(118,203,250,0.5));
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            top: 60%;
+            right: -5%;
+            animation-delay: -5s;
+        }
+
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(194,214,255,0.95), rgba(130,166,248,0.55));
+            border-radius: 40% 60% 60% 40% / 70% 30% 70% 30%;
+            bottom: 10%;
+            left: 30%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translate3d(18px,-28px,60px) rotate(5deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translate3d(-16px,26px,52px) rotate(-5deg); }
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.62);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(164, 198, 231, 0.45);
+            box-shadow: 0 8px 30px rgba(132, 175, 216, 0.18);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img {
+            height: 42px;
+            width: auto;
+        }
+
+        .logo span {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f3557;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #2d405f;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+            color: #1f8fd8;
+        }
+
+        .logout-btn {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #ff9a9a, #ff7777);
+            border: none;
+            border-radius: 20px;
+            color: #5f1f1f;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 50px 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .hero-content h1 {
+            font-size: 56px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero-content h1 span {
+            background: linear-gradient(135deg, #1f8fd8, #3a7df1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            opacity: 0.84;
+            color: #506585;
+            margin-bottom: 30px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1f8fd8;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.84;
+            color: #546886;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #39c4ee, #3a82f2);
+            color: #082645;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(87,169,231,0.34);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #6ee0cf, #65bff1);
+            color: #0a334f;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(95,178,164,0.28);
+        }
+
+        .doctors-section {
+            padding: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title h2 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            opacity: 0.7;
+        }
+
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .doctor-card-full {
+            background: rgba(255,255,255,0.72);
+            border: 1px solid rgba(170, 201, 230, 0.58);
+            box-shadow: 0 18px 42px rgba(129, 172, 211, 0.16);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: 0.4s;
+            cursor: pointer;
+        }
+
+        .doctor-card-full:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.86);
+            box-shadow: 0 24px 56px rgba(91, 161, 224, 0.22);
+        }
+
+        .doctor-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(157,208,241,0.2);
+            border: 1px solid rgba(132,195,239,0.7);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: #2a77b8;
+        }
+
+        .doctor-card-full h4 {
+            margin-bottom: 5px;
+        }
+
+        .doctor-card-full .specialization {
+            color: #1f8fd8;
+            margin-bottom: 15px;
+        }
+
+        .book-now-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #39c4ee, #3a82f2);
+            border: none;
+            border-radius: 25px;
+            color: #082645;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .book-now-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(87,169,231,0.34);
+        }
+
+        .payment-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(98, 138, 178, 0.35);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 260;
+        }
+
+        .payment-modal.show {
+            display: flex;
+        }
+
+        .payment-card {
+            width: min(430px, calc(100vw - 28px));
+            background: rgba(255,255,255,0.95);
+            border: 1px solid rgba(170, 201, 230, 0.58);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 20px 54px rgba(123, 168, 208, 0.24);
+        }
+
+        .payment-card h3 {
+            margin-bottom: 10px;
+            color: #1f8fd8;
+        }
+
+        .payment-method-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 14px 0;
+        }
+
+        .payment-method-btn {
+            padding: 10px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(170, 201, 230, 0.58);
+            background: rgba(255,255,255,0.82);
+            cursor: pointer;
+            color: #2d405f;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .payment-method-btn.active {
+            border-color: #84c3ef;
+            background: rgba(157,208,241,0.25);
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .payment-actions button {
+            flex: 1;
+            padding: 11px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .btn-cancel-pay { background: #f3f7fb; color: #5f1f1f; border: 1px solid #ffd0d0 !important; }
+        .btn-confirm-pay { background: linear-gradient(135deg, #6ee0cf, #65bff1); color: #0a334f; }
+
+        .booking-container {
+            position: fixed;
+            right: -500px;
+            top: 0;
+            width: 500px;
+            height: 100vh;
+            background: rgba(247, 252, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            z-index: 200;
+            transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            box-shadow: -20px 0 60px rgba(123, 168, 208, 0.24);
+        }
+
+        .booking-container.show {
+            right: 0;
+        }
+
+        .close-booking {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #2d405f;
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+
+        .close-booking:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+
+        .booking-step {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .booking-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .booking-step h2 {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .booking-step h2 i {
+            color: #1f8fd8;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(201,225,247,0.58);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .step.active {
+            background: #39c4ee;
+            color: #082645;
+        }
+
+        .step.completed {
+            background: #6ee0cf;
+            color: #0a334f;
+        }
+
+        .selected-info {
+            background: rgba(157, 208, 241, 0.24);
+            border: 1px solid #84c3ef;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .selected-info h4 {
+            color: #1f8fd8;
+            margin-bottom: 10px;
+        }
+
+        .selected-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            opacity: 0.9;
+            color: #4f6484;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.88);
+            border: 1px solid rgba(167, 201, 233, 0.75);
+            border-radius: 10px;
+            color: #1f3557;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #74bde9;
+            box-shadow: 0 0 20px rgba(116,189,233,0.28);
+        }
+
+        .form-group select option {
+            background: #eff8ff;
+            color: #1f3557;
+        }
+
+        .date-picker {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .date-slot {
+            padding: 10px;
+            text-align: center;
+            background: rgba(255,255,255,0.78);
+            border: 1px solid rgba(170, 201, 230, 0.58);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .date-slot:hover, .date-slot.selected {
+            background: rgba(157,208,241,0.2);
+            border-color: #84c3ef;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .time-slot {
+            padding: 12px;
+            text-align: center;
+            background: rgba(255,255,255,0.78);
+            border: 1px solid rgba(170, 201, 230, 0.58);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .time-slot:hover, .time-slot.selected {
+            background: rgba(157,208,241,0.2);
+            border-color: #84c3ef;
+        }
+
+        .success-animation {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-animation i {
+            font-size: 80px;
+            color: #2abca6;
+            animation: popIn 0.5s;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            color: #1f8fd8;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 18px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(98, 138, 178, 0.26);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .my-appointments {
+            padding: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.72);
+            border: 1px solid rgba(170, 201, 230, 0.58);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .appointments-table th, .appointments-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(166, 198, 228, 0.35);
+        }
+
+        .appointments-table th {
+            background: rgba(111, 186, 236, 0.18);
+            color: #1f8fd8;
+        }
+
+        .appointments-table tr:hover {
+            background: rgba(157, 208, 241, 0.14);
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .status-scheduled {
+            background: rgba(0,229,255,0.2);
+            color: #1f8fd8;
+        }
+
+        .status-completed {
+            background: rgba(0,255,136,0.2);
+            color: #2abca6;
+        }
+
+        /* ===== AI Chatbot ===== */
+        .chat-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 300;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #39c4ee, #3a82f2);
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(58, 130, 242, 0.45);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-toggle:hover {
+            transform: scale(1.08);
+            box-shadow: 0 12px 40px rgba(58, 130, 242, 0.55);
+        }
+        .chat-toggle.active {
+            transform: rotate(45deg);
+        }
+
+        .chat-panel {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            z-index: 299;
+            width: 380px;
+            height: 560px;
+            background: rgba(247, 252, 255, 0.97);
+            border: 1px solid rgba(170, 201, 230, 0.58);
+            border-radius: 20px;
+            box-shadow: 0 25px 70px rgba(92, 148, 200, 0.3);
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.9);
+            opacity: 0;
+            visibility: hidden;
+            transform-origin: bottom right;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow: hidden;
+        }
+        .chat-panel.show {
+            transform: scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #39c4ee, #3a82f2);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .chat-header i {
+            font-size: 22px;
+            color: #fff;
+        }
+        .chat-header h3 {
+            flex: 1;
+            color: #fff;
+            font-size: 16px;
+            margin: 0;
+        }
+        .chat-header .close-chat {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.85);
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .chat-header .close-chat:hover {
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chat-messages::-webkit-scrollbar { width: 5px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: rgba(58,130,242,0.3); border-radius: 10px; }
+
+        .msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            animation: msgIn 0.3s ease;
+        }
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .msg.bot {
+            align-self: flex-start;
+            background: rgba(201, 225, 247, 0.5);
+            border: 1px solid rgba(170, 201, 230, 0.4);
+            color: #1f3557;
+            border-bottom-left-radius: 4px;
+        }
+        .msg.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #39c4ee, #3a82f2);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding: 14px 16px;
+            border-top: 1px solid rgba(170, 201, 230, 0.3);
+            background: rgba(255,255,255,0.8);
+            flex-shrink: 0;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 25px;
+            border: 1px solid rgba(170, 201, 230, 0.6);
+            background: rgba(255,255,255,0.9);
+            color: #1f3557;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .chat-input-area input:focus {
+            border-color: #74bde9;
+            box-shadow: 0 0 0 3px rgba(116,189,233,0.25);
+        }
+        .chat-input-area .send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #39c4ee, #3a82f2);
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-input-area .send-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(58,130,242,0.4);
+        }
+        .chat-input-area .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            align-self: flex-start;
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: rgba(201, 225, 247, 0.5);
+            border: 1px solid rgba(170, 201, 230, 0.4);
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #3a82f2;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-8px); opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .chat-panel {
+                width: calc(100vw - 30px);
+                height: 60vh;
+                right: 15px;
+                bottom: 85px;
+            }
+            .chat-toggle {
+                bottom: 20px;
+                right: 20px;
+                width: 52px;
+                height: 52px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 36px;
+            }
+            .hero-section {
+                padding: 100px 20px 30px;
+            }
+            .booking-container {
+                width: 100%;
+                right: -100%;
+            }
+            .doctors-section {
+                padding: 30px 20px;
+            }
+            .navbar {
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scene">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="assets/logo.png" alt="Smart Healthcare Logo" onerror="this.style.display='none'">
+            <span>Smart Healthcare</span>
+        </div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#doctors">Doctors</a>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <section class="hero-section" id="home">
+        <div class="hero-content">
+            <h1>Book Your <span>Appointment</span></h1>
+            <p>Choose from our expert doctors and book your appointment instantly.</p>
+            
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-number" id="doctorStat">0</div>
+                    <div class="stat-label">Expert Doctors</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="appointmentStat">0</div>
+                    <div class="stat-label">My Appointments</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="scrollToDoctors()">
+                <i class="fas fa-calendar-check"></i> Book Appointment
+            </button>
+        </div>
+    </section>
+
+    <section class="doctors-section" id="doctors">
+        <div class="section-title">
+            <h2>Our Expert Doctors</h2>
+            <p>Choose from our team of specialized healthcare professionals</p>
+        </div>
+        <div class="doctors-grid" id="doctorsGrid">
+            <div class="empty-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading doctors...</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="my-appointments" id="appointments">
+        <div class="section-title">
+            <h2>My Appointments</h2>
+            <p>View your booked appointments</p>
+        </div>
+        <table class="appointments-table" id="myAppointmentsTable">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="appointmentsBody">
+                <tr>
+                    <td colspan="4" class="empty-state">
+                        <i class="fas fa-calendar-times"></i>
+                        <p>No appointments yet</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="booking-container" id="bookingContainer">
+        <button class="close-booking" onclick="closeBooking()">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="step-indicator">
+            <div class="step active" id="step1Indicator">1</div>
+            <div class="step" id="step2Indicator">2</div>
+            <div class="step" id="step3Indicator">3</div>
+        </div>
+
+        <div class="booking-step active" id="step1">
+            <h2><i class="fas fa-user-md"></i> Select Doctor</h2>
+            <div id="doctorList" style="max-height: 400px; overflow-y: auto;">
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading doctors...</p>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-top:20px;" onclick="nextStep(2)" id="toStep2Btn" disabled>
+                Continue <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <div class="booking-step" id="step2">
+            <h2><i class="fas fa-calendar-alt"></i> Select Date & Time</h2>
+            
+            <div class="selected-info" id="selectedDoctorInfo"></div>
+
+            <div class="form-group">
+                <label>Select Date</label>
+                <div class="date-picker" id="datePicker"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Available Time Slots</label>
+                <div class="time-slots" id="timeSlots">
+                    <div class="time-slot" data-time="09:00 AM">09:00 AM</div>
+                    <div class="time-slot" data-time="09:30 AM">09:30 AM</div>
+                    <div class="time-slot" data-time="10:00 AM">10:00 AM</div>
+                    <div class="time-slot" data-time="10:30 AM">10:30 AM</div>
+                    <div class="time-slot" data-time="11:00 AM">11:00 AM</div>
+                    <div class="time-slot" data-time="11:30 AM">11:30 AM</div>
+                    <div class="time-slot" data-time="02:00 PM">02:00 PM</div>
+                    <div class="time-slot" data-time="02:30 PM">02:30 PM</div>
+                    <div class="time-slot" data-time="03:00 PM">03:00 PM</div>
+                    <div class="time-slot" data-time="03:30 PM">03:30 PM</div>
+                    <div class="time-slot" data-time="04:00 PM">04:00 PM</div>
+                    <div class="time-slot" data-time="04:30 PM">04:30 PM</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%;" onclick="nextStep(3)" id="toStep3Btn" disabled>
+                Continue <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <div class="booking-step" id="step3">
+            <h2><i class="fas fa-user"></i> Your Details</h2>
+            
+            <div class="selected-info" id="appointmentSummary"></div>
+
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Full Name</label>
+                <input type="text" id="patientName" placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-calendar"></i> Age</label>
+                <input type="number" id="patientAge" placeholder="Enter your age" min="1" max="150">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Phone Number</label>
+                <input type="tel" id="patientPhone" placeholder="Enter phone number">
+            </div>
+
+            <button class="btn btn-success" style="width:100%;" onclick="openPaymentDialog()" id="confirmBtn" disabled>
+                <i class="fas fa-check-circle"></i> Confirm Booking
+            </button>
+        </div>
+
+        <div class="booking-step" id="stepSuccess">
+            <div class="success-animation">
+                <i class="fas fa-check-circle"></i>
+                <h2 style="margin-top:20px;">Appointment Booked!</h2>
+                <p>Your appointment has been confirmed successfully.</p>
+                <button class="btn btn-primary" style="margin-top:30px;" onclick="resetBooking()">
+                    Book Another Appointment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="payment-modal" id="appointmentPaymentModal">
+        <div class="payment-card">
+            <h3><i class="fas fa-credit-card"></i> Appointment Payment</h3>
+            <p style="color:#5b6f8c; margin-bottom:10px;">Consultation fee is required to confirm your slot.</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:rgba(157,208,241,0.18); border-radius:10px; border:1px solid rgba(132,195,239,0.7);">
+                <span style="font-weight:700;">Consultation Fee</span>
+                <span id="appointmentFeeText" style="font-weight:700; color:#1f8fd8;">Rs. 500</span>
+            </div>
+
+            <div class="payment-method-options">
+                <button class="payment-method-btn active" onclick="selectPaymentMethod(this, 'card')">Card</button>
+                <button class="payment-method-btn" onclick="selectPaymentMethod(this, 'upi')">UPI</button>
+                <button class="payment-method-btn" onclick="selectPaymentMethod(this, 'cash')">Cash</button>
+            </div>
+
+            <div class="payment-actions">
+                <button class="btn-cancel-pay" onclick="closePaymentDialog()">Cancel</button>
+                <button class="btn-confirm-pay" onclick="confirmBookingWithPayment()">Pay & Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== AI Chatbot ===== -->
+    <button class="chat-toggle" id="chatToggle" onclick="toggleChat()" title="AI Assistant">
+        <i class="fas fa-comment-dots"></i>
+    </button>
+
+    <div class="chat-panel" id="chatPanel">
+        <div class="chat-header">
+            <i class="fas fa-robot"></i>
+            <h3>Health Assistant</h3>
+            <button class="close-chat" onclick="toggleChat()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Ask about symptoms, medicines..." onkeydown="if(event.key==='Enter') sendMessage()">
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "/api";
+        
+        let selectedDoctor = null;
+        let selectedDate = null;
+        let selectedTime = null;
+        let doctors = [];
+        let selectedPaymentMethod = 'card';
+        const APPOINTMENT_FEE = 500;
+
+        // Get user from session or local storage
+        let user = null;
+        let userFound = false;
+        
+        // Try sessionStorage first
+        const sessionUser = sessionStorage.getItem("user");
+        if (sessionUser) {
+            try {
+                user = JSON.parse(sessionUser);
+                userFound = true;
+            } catch(e) {}
+        }
+        
+        // Try localStorage if not found
+        if (!userFound) {
+            const localUser = localStorage.getItem("user");
+            if (localUser) {
+                try {
+                    user = JSON.parse(localUser);
+                    // Also sync to session
+                    sessionStorage.setItem("user", localUser);
+                    userFound = true;
+                } catch(e) {}
+            }
+        }
+        
+        // Try loginData as last resort
+        if (!userFound) {
+            const loginData = sessionStorage.getItem("loginData");
+            if (loginData) {
+                try {
+                    const data = JSON.parse(loginData);
+                    user = data.user || data;
+                    userFound = true;
+                } catch(e) {}
+            }
+        }
+        
+        console.log("User from session:", user);
+        
+        if (!user) {
+            alert("No user session found. Please login again.");
+            window.location.href = "login.html";
+            throw new Error("No user session");
+        }
+        
+        // Check role - be flexible
+        const userRole = user.role ? user.role.toLowerCase() : '';
+        console.log("User role:", userRole);
+
+        function logout() {
+            sessionStorage.clear();
+            localStorage.clear();
+            window.location.href = "login.html";
+        }
+
+        function getToken() {
+            return sessionStorage.getItem("hms_token") || localStorage.getItem("hms_token");
+        }
+
+        function getAuthHeaders() {
+            return {
+                "Authorization": "Bearer " + getToken(),
+                "Content-Type": "application/json"
+            };
+        }
+
+        function scrollToDoctors() {
+            window.location.href = 'patient.html?view=doctors#doctors';
+        }
+
+        function getDoctorIcon(specialization) {
+            const spec = (specialization || '').toLowerCase();
+            if (spec.includes('cardio')) return 'fas fa-heart-pulse';
+            if (spec.includes('derma')) return 'fas fa-bandage';
+            if (spec.includes('neuro')) return 'fas fa-brain';
+            if (spec.includes('pedia')) return 'fas fa-baby';
+            if (spec.includes('ortho')) return 'fas fa-bone';
+            if (spec.includes('opta') || spec.includes('ophtha') || spec.includes('eye')) return 'fas fa-eye';
+            return 'fas fa-stethoscope';
+        }
+
+        // Load doctors from API
+        function loadDoctors() {
+            const grid = document.getElementById('doctorsGrid');
+            const list = document.getElementById('doctorList');
+            
+            fetch(`${API_BASE}/doctors`, {
+                headers: getAuthHeaders()
+            })
+            .then(async res => {
+                const text = await res.text();
+                if (!text || text.trim() === "") return [];
+                return JSON.parse(text);
+            })
+            .then(data => {
+                console.log("Doctors loaded:", data);
+                doctors = data || [];
+                
+                document.getElementById('doctorStat').innerText = doctors.length;
+                
+                if (doctors.length === 0) {
+                    grid.innerHTML = '<div class="empty-state"><i class="fas fa-user-md"></i><p>No doctors available</p></div>';
+                    list.innerHTML = '<div class="empty-state">No doctors available</div>';
+                    return;
+                }
+                
+                // Render grid
+                grid.innerHTML = doctors.map(d => `
+                    <div class="doctor-card-full" onclick="selectDoctor(${d.id})">
+                        <div class="doctor-avatar">
+                            <i class="${getDoctorIcon(d.specialization)}"></i>
+                        </div>
+                        <h4>${d.name}</h4>
+                        <div class="specialization">${d.specialization || 'General Medicine'}</div>
+                        <button class="book-now-btn" onclick="event.stopPropagation(); openBookingForDoctor(${d.id})">
+                            <i class="fas fa-calendar-plus"></i> Book Now
+                        </button>
+                    </div>
+                `).join('');
+                
+                // Render list in booking panel
+                list.innerHTML = doctors.map(d => `
+                    <div style="background: rgba(255,255,255,0.78); border: 1px solid rgba(170, 201, 230, 0.58); border-radius: 15px; padding: 15px; margin-bottom: 10px; cursor: pointer; transition: 0.3s;" 
+                         onclick="selectDoctor(${d.id})" 
+                         id="doctor-${d.id}"
+                         onmouseover="this.style.borderColor='#84c3ef'"
+                         onmouseout="this.style.borderColor='rgba(170, 201, 230, 0.58)'">
+                        <h4 style="margin-bottom: 5px;">${d.name}</h4>
+                        <div style="color: #1f8fd8; font-size: 14px;">${d.specialization || 'General Medicine'}</div>
+                    </div>
+                `).join('');
+            })
+            .catch(err => {
+                console.error("Failed to load doctors:", err);
+                grid.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Unable to load doctors.<br>Please check your connection.</p></div>';
+            });
+        }
+
+        // Load user's appointments
+        function loadMyAppointments() {
+            fetch(`${API_BASE}/appointments`, {
+                headers: getAuthHeaders()
+            })
+            .then(async res => {
+                const text = await res.text();
+                if (!text || text.trim() === "") return [];
+                return JSON.parse(text);
+            })
+            .then(data => {
+                const appointments = data || [];
+                document.getElementById('appointmentStat').innerText = appointments.length;
+                
+                const tbody = document.getElementById('appointmentsBody');
+                
+                if (appointments.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state"><i class="fas fa-calendar-times"></i><p>No appointments yet</p></td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = appointments.map(a => `
+                    <tr>
+                        <td>${(a.doctor && a.doctor.name) || a.doctorName || (a.doctorId ? 'Doctor #' + a.doctorId : 'Unknown Doctor')}</td>
+                        <td>${a.date || '-'}</td>
+                        <td>${a.slot || '-'}</td>
+                        <td><span class="status-badge ${a.status === 'COMPLETED' ? 'status-completed' : 'status-scheduled'}">${a.status || 'SCHEDULED'}</span></td>
+                    </tr>
+                `).join('');
+            })
+            .catch(err => {
+                console.error("Failed to load appointments:", err);
+            });
+        }
+
+        function openBookingForDoctor(id) {
+            selectDoctor(id);
+            openBooking();
+        }
+
+        function selectDoctor(id) {
+            selectedDoctor = doctors.find(d => d.id === id);
+            
+            document.querySelectorAll('[id^="doctor-"]').forEach(el => {
+                if (el.id !== 'doctor-' + id) {
+                    el.style.borderColor = 'rgba(170, 201, 230, 0.58)';
+                } else {
+                    el.style.borderColor = '#84c3ef';
+                    el.style.background = 'rgba(157,208,241,0.2)';
+                }
+            });
+            
+            document.getElementById('toStep2Btn').disabled = false;
+            
+            document.getElementById('selectedDoctorInfo').innerHTML = `
+                <h4><i class="fas fa-user-md"></i> ${selectedDoctor.name}</h4>
+                <p><i class="fas fa-stethoscope"></i> ${selectedDoctor.specialization || 'General Medicine'}</p>
+            `;
+        }
+
+        function renderDatePicker() {
+            const picker = document.getElementById('datePicker');
+            picker.innerHTML = '';
+            
+            const today = new Date();
+            for (let i = 0; i < 14; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                
+                const day = date.getDate();
+                const month = date.toLocaleString('default', { month: 'short' });
+                const dayName = date.toLocaleString('default', { weekday: 'short' });
+                
+                const slot = document.createElement('div');
+                slot.className = 'date-slot';
+                slot.innerHTML = `
+                    <div>${dayName}</div>
+                    <div style="font-weight:bold;">${day}</div>
+                    <div style="font-size:12px;">${month}</div>
+                `;
+                slot.onclick = () => selectDate(slot, date);
+                picker.appendChild(slot);
+            }
+        }
+
+        function selectDate(element, date) {
+            document.querySelectorAll('.date-slot').forEach(s => s.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedDate = date.toISOString().split('T')[0];
+            checkStep2Complete();
+        }
+
+        // Time slot selection
+        document.querySelectorAll('.time-slot').forEach(slot => {
+            slot.onclick = function() {
+                document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedTime = this.dataset.time;
+                checkStep2Complete();
+            };
+        });
+
+        function checkStep2Complete() {
+            document.getElementById('toStep3Btn').disabled = !(selectedDate && selectedTime);
+        }
+
+        function nextStep(step) {
+            if (step === 2 && !selectedDoctor) {
+                alert("Please select a doctor first!");
+                return;
+            }
+            if (step === 3 && (!selectedDate || !selectedTime)) {
+                alert("Please select date and time!");
+                return;
+            }
+
+            document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+
+            for (let i = 1; i < step; i++) {
+                document.getElementById(`step${i}Indicator`).classList.add('completed');
+                document.getElementById(`step${i}Indicator`).classList.remove('active');
+            }
+            document.getElementById(`step${step}Indicator`).classList.add('active');
+
+            if (step === 2) {
+                renderDatePicker();
+            }
+
+            if (step === 3) {
+                document.getElementById('appointmentSummary').innerHTML = `
+                    <h4><i class="fas fa-user-md"></i> ${selectedDoctor.name}</h4>
+                    <p><i class="fas fa-stethoscope"></i> ${selectedDoctor.specialization || 'General Medicine'}</p>
+                    <p><i class="fas fa-calendar"></i> ${selectedDate}</p>
+                    <p><i class="fas fa-clock"></i> ${selectedTime}</p>
+                `;
+            }
+        }
+
+        function checkFormComplete() {
+            const name = document.getElementById('patientName').value;
+            const age = document.getElementById('patientAge').value;
+            const phone = document.getElementById('patientPhone').value;
+            
+            document.getElementById('confirmBtn').disabled = !(name && age && phone);
+        }
+
+        document.getElementById('patientName').addEventListener('input', checkFormComplete);
+        document.getElementById('patientAge').addEventListener('input', checkFormComplete);
+        document.getElementById('patientPhone').addEventListener('input', checkFormComplete);
+
+        function openPaymentDialog() {
+            document.getElementById('appointmentFeeText').innerText = `Rs. ${APPOINTMENT_FEE}`;
+            document.getElementById('appointmentPaymentModal').classList.add('show');
+        }
+
+        function closePaymentDialog() {
+            document.getElementById('appointmentPaymentModal').classList.remove('show');
+        }
+
+        function selectPaymentMethod(btn, method) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.payment-method-btn').forEach(x => x.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function confirmBookingWithPayment() {
+            const data = {
+                doctorId: selectedDoctor.id,
+                patientName: document.getElementById("patientName").value,
+                patientAge: document.getElementById("patientAge").value,
+                patientPhone: document.getElementById("patientPhone").value,
+                date: selectedDate,
+                slot: selectedTime,
+                fee: APPOINTMENT_FEE,
+                paymentMethod: selectedPaymentMethod,
+                paymentStatus: "PAID"
+            };
+
+            console.log("Booking data:", data);
+
+            fetch(`${API_BASE}/appointments`, {
+                method: "POST",
+                headers: getAuthHeaders(),
+                body: JSON.stringify(data)
+            })
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(text || "Failed to book appointment");
+                }
+                closePaymentDialog();
+                alert("Appointment booked successfully!");
+                document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
+                document.getElementById('stepSuccess').classList.add('active');
+                loadMyAppointments();
+            })
+            .catch(err => {
+                console.error("Booking error:", err);
+                alert("Error: " + err.message);
+            });
+        }
+
+        function openBooking() {
+            document.getElementById('bookingContainer').classList.add('show');
+            document.getElementById('overlay').classList.add('show');
+        }
+
+        function closeBooking() {
+            document.getElementById('bookingContainer').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        document.getElementById('overlay').addEventListener('click', closeBooking);
+
+        function resetBooking() {
+            selectedDoctor = null;
+            selectedDate = null;
+            selectedTime = null;
+            
+            document.querySelectorAll('[id^="doctor-"]').forEach(el => {
+                el.style.borderColor = 'rgba(170, 201, 230, 0.58)';
+                el.style.background = 'rgba(255,255,255,0.78)';
+            });
+            document.querySelectorAll('.date-slot').forEach(s => s.classList.remove('selected'));
+            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+            
+            document.getElementById('patientName').value = '';
+            document.getElementById('patientAge').value = '';
+            document.getElementById('patientPhone').value = '';
+            
+            document.getElementById('toStep2Btn').disabled = true;
+            document.getElementById('toStep3Btn').disabled = true;
+            document.getElementById('confirmBtn').disabled = true;
+            
+            document.querySelectorAll('.step').forEach((s, i) => {
+                s.classList.remove('active', 'completed');
+                if (i === 0) s.classList.add('active');
+            });
+            
+            document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step1').classList.add('active');
+            
+            closeBooking();
+        }
+
+        // ===== AI Chatbot =====
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        function toggleChat() {
+            const panel = document.getElementById('chatPanel');
+            const toggle = document.getElementById('chatToggle');
+            panel.classList.toggle('show');
+            toggle.classList.toggle('active');
+            if (panel.classList.contains('show') && chatMessages.children.length === 0) {
+                addBotMsg("Hello! I'm your Smart Healthcare assistant. Ask me about symptoms, medicines, or general health tips.");
+            }
+            if (panel.classList.contains('show')) {
+                setTimeout(() => chatInput.focus(), 400);
+            }
+        }
+
+        function addBotMsg(text) {
+            const div = document.createElement('div');
+            div.className = 'msg bot';
+            div.textContent = text;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addUserMsg(text) {
+            const div = document.createElement('div');
+            div.className = 'msg user';
+            div.textContent = text;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTyping() {
+            const div = document.createElement('div');
+            div.className = 'typing-indicator';
+            div.id = 'typingIndicator';
+            div.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            const el = document.getElementById('typingIndicator');
+            if (el) el.remove();
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            chatInput.value = '';
+            sendBtn.disabled = true;
+            addUserMsg(text);
+            showTyping();
+
+            try {
+                const res = await fetch(`${API_BASE}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: text })
+                });
+
+                hideTyping();
+                const data = await res.json();
+                const openai = data.reply;
+
+                if (openai.error) {
+                    let errMsg = "Sorry, the AI assistant is unavailable right now.";
+                    if (typeof openai.error === 'string') errMsg += " (" + openai.error + ")";
+                    addBotMsg(errMsg);
+                    console.error("OpenAI error:", openai.error);
+                } else {
+                    const reply = openai.choices[0].message.content.trim();
+                    addBotMsg(reply);
+                }
+            } catch (err) {
+                hideTyping();
+                addBotMsg("Connection error. Please check your internet and try again.");
+                console.error("Chat error:", err);
+            } finally {
+                sendBtn.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        // Initialize
+        loadDoctors();
+        loadMyAppointments();
+    </script>
+</body>
+</html>

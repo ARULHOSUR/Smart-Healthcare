@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: hms-backend
+    env: java
+    region: oregon
+    buildCommand: cd backend && mvn clean package -DskipTests
+    startCommand: java -jar backend/target/hms-backend-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:mysql://your-mysql-host:3306/hmsdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - key: SPRING_DATASOURCE_USERNAME
+        value: root
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: your-mysql-password
+      - key: SERVER_PORT
+        value: 9091
+      - key: JWT_SECRET
+        value: c3VwZXItdmVyeS1zZWNyZXQtZGVtby1rZXktMjU2LS0tLS0=
+      - key: JWT_EXPIRATION_MINUTES
+        value: "120"
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_PHONE_NUMBER
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gemini-2.5-flash

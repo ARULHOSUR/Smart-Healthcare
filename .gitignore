@@ -1,0 +1,25 @@
+# Java / Maven
+backend/target/
+*.class
+*.jar
+*.war
+
+# Eclipse / IDE
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/.factorypath
+
+# Node / npm (if any)
+node_modules/
+
+# H2 database files
+*.mv.db
+*.trace.db
+
+# Docker
+mysql_data/
+
+# OS
+.DS_Store
+Thumbs.db

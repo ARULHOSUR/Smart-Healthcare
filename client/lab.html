@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Orders | Smart Healthcare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Trebuchet MS', 'Segoe UI', sans-serif; }
+        body { min-height: 100vh; color: #213251; padding: 30px 18px; background: radial-gradient(circle at 12% 14%, #f8fcff 0%, #e9f5ff 28%, rgba(233, 245, 255, 0) 55%), radial-gradient(circle at 88% 82%, #e2f2ff 0%, #d6ecff 24%, rgba(214, 236, 255, 0) 52%), linear-gradient(145deg, #fbfeff 0%, #edf7ff 44%, #f3faff 100%); }
+        .scene { position: fixed; inset: 0; z-index: 0; pointer-events: none; perspective: 1400px; transform-style: preserve-3d; }
+        .floating-shapes { position: absolute; inset: 0; }
+        .shape { position: absolute; opacity: 0.34; filter: blur(0.4px); transform-style: preserve-3d; animation: float 16s ease-in-out infinite; }
+        .shape-1 { width: 420px; height: 420px; top: -10%; left: -8%; border-radius: 42% 58% 65% 35% / 38% 48% 52% 62%; background: linear-gradient(135deg, rgba(159,230,255,0.9), rgba(111,176,255,0.55)); box-shadow: 0 30px 70px rgba(111,176,255,0.25); }
+        .shape-2 { width: 350px; height: 350px; top: 48%; right: -8%; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; background: linear-gradient(135deg, rgba(190,242,241,0.9), rgba(118,203,250,0.5)); box-shadow: 0 30px 70px rgba(118,203,250,0.24); animation-delay: -6s; }
+        .shape-3 { width: 240px; height: 240px; bottom: 4%; left: 18%; border-radius: 50%; background: linear-gradient(135deg, rgba(194,214,255,0.95), rgba(130,166,248,0.55)); box-shadow: 0 24px 58px rgba(130,166,248,0.24); animation-delay: -11s; }
+        @keyframes float { 0%,100%{transform:translateY(0) rotate(0deg);} 25%{transform:translate3d(18px,-28px,60px) rotate(5deg);} 75%{transform:translate3d(-16px,26px,52px) rotate(-5deg);} }
+        .page-wrap { max-width: 1250px; margin: 0 auto; position: relative; z-index: 1; }
+        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 10px; }
+        .title { font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .title i { color: #2aa9e8; }
+        .title span { background: linear-gradient(135deg, #2398df, #2f7cf4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-back { border: 1px solid rgba(152,190,223,0.45); border-radius: 10px; padding: 8px 12px; color: #274164; background: rgba(201,225,247,0.58); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-back:hover { color: #274164; background: rgba(201,225,247,0.86); }
+        .panel { background: rgba(255,255,255,0.72); border: 1px solid rgba(170,201,230,0.58); border-radius: 18px; padding: 20px; margin-bottom: 18px; box-shadow: 0 18px 42px rgba(129,172,211,0.16); }
+        .panel h4 { margin-bottom: 14px; color: #1f8fd8; }
+        .split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+        .sub-card { background: rgba(255,255,255,0.82); border: 1px solid rgba(170,201,230,0.58); border-radius: 12px; padding: 14px; }
+        .input-row { display: flex; gap: 10px; margin-top: 10px; }
+        .input-row input, .sub-card input[type="text"] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(157,194,225,0.7); background: rgba(255,255,255,0.9); color: #1f3557; }
+        .sub-card input[type="text"] { margin-bottom: 10px; }
+        .btn-primary { padding: 10px 18px; background: linear-gradient(135deg, #39c4ee, #3a82f2); border: none; border-radius: 8px; color: #082645; cursor: pointer; font-weight: 700; }
+        .btn-mint { width: 100%; margin-top: 10px; padding: 12px; background: linear-gradient(135deg, #6ee0cf, #65bff1); border: none; border-radius: 8px; color: #0a334f; cursor: pointer; font-weight: 700; }
+        .btn-danger { background: #ff8f8f; border: none; border-radius: 5px; color: #5f1f1f; padding: 5px 10px; cursor: pointer; font-weight: 700; }
+        .tests-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+        .tests-grid label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+        .lab-test-checkbox { width: 16px; height: 16px; margin: 0; flex: 0 0 auto; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .data-table th, .data-table td { border-bottom: 1px solid rgba(166,198,228,0.35); padding: 11px 12px; text-align: left; font-size: 14px; }
+        .data-table th { color: #1f8fd8; background: rgba(111,186,236,0.18); font-weight: 700; }
+        .data-table tr:hover { background: rgba(157,208,241,0.14); }
+        .empty-row { text-align: center; opacity: 0.7; padding: 25px 12px; color: #5d7290; }
+        .status-pill { background: rgba(176,235,223,0.36); color: #2b957f; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: 700; }
+        #labCartItems { display: none; }
+        #labCartContent > div { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.76); border-radius: 5px; margin-bottom: 5px; border: 1px solid rgba(166,198,228,0.35); }
+        @media (max-width: 900px) { .split-grid { grid-template-columns: 1fr; } .topbar { flex-direction: column; align-items: flex-start; } .title { font-size: 22px; } }
+    </style>
+</head>
+<body>
+    <div class="scene"><div class="floating-shapes"><div class="shape shape-1"></div><div class="shape shape-2"></div><div class="shape shape-3"></div></div></div>
+    <div class="page-wrap">
+        <div class="topbar">
+            <div class="title"><i class="fas fa-flask"></i><span>Lab Orders</span></div>
+            <a class="btn-back" href="admin.html"><i class="fas fa-arrow-left"></i> Back to Admin Dashboard</a>
+        </div>
+
+        <div class="panel">
+            <div class="split-grid">
+                <div class="sub-card">
+                    <h4><i class="fas fa-search"></i> Search Patient Tests</h4>
+                    <div class="input-row"><input type="text" id="searchPatientName" placeholder="Enter Patient Name"><button class="btn-primary" onclick="searchPatientTests()">Search</button></div>
+                    <div id="patientTestsResult" style="margin-top: 15px;"></div>
+                </div>
+                <div class="sub-card">
+                    <h4><i class="fas fa-shopping-cart"></i> Lab Cart</h4>
+                    <input type="text" id="cartPatientName" placeholder="Patient Name">
+                    <input type="text" id="cartPatientAge" placeholder="Age">
+                    <input type="text" id="cartPatientPhone" placeholder="Phone Number">
+                    <label style="color: #2abca6; font-weight: bold;">Add Tests to Cart:</label>
+                    <div class="tests-grid">
+                        <label><input type="checkbox" class="lab-test-checkbox" value="Blood Test"> Blood Test</label>
+                        <label><input type="checkbox" class="lab-test-checkbox" value="CT Scan"> CT Scan</label>
+                        <label><input type="checkbox" class="lab-test-checkbox" value="X-Ray"> X-Ray</label>
+                        <label><input type="checkbox" class="lab-test-checkbox" value="MRI"> MRI</label>
+                        <label><input type="checkbox" class="lab-test-checkbox" value="ECG"> ECG</label>
+                        <label><input type="checkbox" class="lab-test-checkbox" value="EEG"> EEG</label>
+                        <label><input type="checkbox" class="lab-test-checkbox" value="Ultrasound"> Ultrasound</label>
+                        <label><input type="checkbox" class="lab-test-checkbox" value="Urine Test"> Urine Test</label>
+                        <label><input type="checkbox" class="lab-test-checkbox" value="Lipid Profile"> Lipid Profile</label>
+                        <label><input type="checkbox" class="lab-test-checkbox" value="Liver Function Test"> LFT</label>
+                        <label><input type="checkbox" class="lab-test-checkbox" value="Kidney Function Test"> KFT</label>
+                        <label><input type="checkbox" class="lab-test-checkbox" value="Thyroid Profile"> Thyroid</label>
+                    </div>
+                    <button class="btn-mint" onclick="addTestsToLabCart()">Add to Cart</button>
+                </div>
+            </div>
+
+            <div id="labCartItems" class="sub-card">
+                <h4><i class="fas fa-shopping-cart"></i> Cart Items</h4>
+                <div id="labCartContent"></div>
+                <button class="btn-mint" onclick="processLabPayment()"><i class="fas fa-credit-card"></i> Proceed to Payment</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h4><i class="fas fa-history"></i> Lab Orders History</h4>
+            <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>ID</th><th>Patient</th><th>Age</th><th>Phone</th><th>Tests</th><th>Status</th><th>Date</th></tr></thead><tbody id="labTableBody"></tbody></table></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "/api";
+        let labCart = [];
+        function getToken() { return sessionStorage.getItem("hms_token") || localStorage.getItem("hms_token"); }
+        function getAuthHeaders() { return { "Authorization": "Bearer " + getToken(), "Content-Type": "application/json" }; }
+        function validateSession() {
+            let user = null;
+            const sessionUser = sessionStorage.getItem("user");
+            if (sessionUser) user = JSON.parse(sessionUser);
+            else {
+                const localUser = localStorage.getItem("user");
+                if (localUser) { user = JSON.parse(localUser); sessionStorage.setItem("user", localUser); }
+            }
+            if (!user || (user.role || "").toLowerCase() !== "admin") { alert("Access denied. Admin only."); window.location.href = "login.html"; }
+        }
+
+        async function searchPatientTests() {
+            const patientName = document.getElementById("searchPatientName").value.trim();
+            if (!patientName) { alert("Please enter patient name"); return; }
+            try {
+                const res = await fetch(`${API_BASE}/emr`, { headers: getAuthHeaders() });
+                const text = await res.text();
+                const emrList = (text && text.trim()) ? JSON.parse(text) : [];
+                const patientEMRs = emrList.filter(e => (e.patient?.name || e.patientName || '').toLowerCase().includes(patientName.toLowerCase()));
+                const resultDiv = document.getElementById("patientTestsResult");
+                if (patientEMRs.length === 0) { resultDiv.innerHTML = '<p style="color:#b34141;">No EMR records found for this patient</p>'; return; }
+
+                let html = '<div style="margin-top:10px;">';
+                patientEMRs.forEach((emr) => {
+                    let tests = emr.tests || [];
+                    if (typeof tests === 'string' && tests.trim()) {
+                        try { tests = JSON.parse(tests); } catch (e) { tests = tests.split(',').map(t => t.trim()); }
+                    }
+                    if (emr.notes && emr.notes.includes('Tests:')) {
+                        const testsMatch = emr.notes.match(/Tests:\s*([^\n]+)/);
+                        if (testsMatch) testsMatch[1].split(',').map(t => t.trim()).forEach(t => { if (!tests.includes(t)) tests.push(t); });
+                    }
+                    if (tests.length > 0) {
+                        html += `<div style="background: rgba(176,235,223,0.28); padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid rgba(129,207,188,0.58);"><strong>Date: ${emr.date || '-'}</strong><br><span style="color:#1f8fd8;">Tests: ${Array.isArray(tests) ? tests.join(", ") : tests}</span><br><button class="btn-primary" style="margin-top:8px; padding:5px 12px;" onclick="addEMRTestsToCart('${emr.patient?.name || emr.patientName || ''}', '${emr.patient?.age || emr.patientAge || ''}', '${emr.patient?.phone || emr.patientPhone || ''}', ${JSON.stringify(tests).replace(/"/g, '&quot;')})">Add to Cart</button></div>`;
+                    }
+                });
+                resultDiv.innerHTML = html + '</div>';
+            } catch (e) {
+                console.error("Error searching patient tests:", e);
+                document.getElementById("patientTestsResult").innerHTML = '<p style="color:#b34141;">Error searching patient</p>';
+            }
+        }
+
+        function addEMRTestsToCart(name, age, phone, tests) {
+            document.getElementById("cartPatientName").value = name || "";
+            document.getElementById("cartPatientAge").value = age || "";
+            document.getElementById("cartPatientPhone").value = phone || "";
+            tests.forEach(test => { if (!labCart.includes(test)) labCart.push(test); });
+            updateLabCartDisplay();
+            alert("Tests added to cart!");
+        }
+
+        function addTestsToLabCart() {
+            const patientName = document.getElementById("cartPatientName").value.trim();
+            if (!patientName) { alert("Please enter patient name"); return; }
+            document.querySelectorAll(".lab-test-checkbox:checked").forEach(checkbox => { if (!labCart.includes(checkbox.value)) labCart.push(checkbox.value); checkbox.checked = false; });
+            if (labCart.length === 0) { alert("Please select at least one test"); return; }
+            updateLabCartDisplay();
+        }
+
+        function updateLabCartDisplay() {
+            const cartDiv = document.getElementById("labCartItems");
+            const contentDiv = document.getElementById("labCartContent");
+            if (labCart.length === 0) { cartDiv.style.display = "none"; return; }
+            cartDiv.style.display = "block";
+            contentDiv.innerHTML = labCart.map((test, idx) => `<div><span>${test}</span><button class="btn-danger" onclick="removeFromLabCart(${idx})">Remove</button></div>`).join('');
+        }
+
+        function removeFromLabCart(idx) { labCart.splice(idx, 1); updateLabCartDisplay(); }
+
+        async function processLabPayment() {
+            const patientName = document.getElementById("cartPatientName").value.trim();
+            const patientAge = document.getElementById("cartPatientAge").value.trim();
+            const patientPhone = document.getElementById("cartPatientPhone").value.trim();
+            if (!patientName) { alert("Please enter patient name"); return; }
+            if (labCart.length === 0) { alert("No tests in cart"); return; }
+            if (!confirm(`Total Tests: ${labCart.length}\nPatient: ${patientName}\n\nProceed to payment?`)) return;
+            try {
+                for (const testName of labCart) {
+                    const labOrder = { patientName, patientAge, patientPhone, testName, status: "PAID", date: new Date().toISOString().split('T')[0] };
+                    await fetch(`${API_BASE}/lab/orders`, { method: "POST", headers: getAuthHeaders(), body: JSON.stringify(labOrder) });
+                }
+                alert("Payment successful! Lab orders have been placed.");
+                labCart = [];
+                updateLabCartDisplay();
+                document.getElementById("cartPatientName").value = "";
+                document.getElementById("cartPatientAge").value = "";
+                document.getElementById("cartPatientPhone").value = "";
+                loadLab();
+            } catch (e) {
+                console.error("Error processing payment:", e);
+                alert("Error processing payment: " + e.message);
+            }
+        }
+
+        async function loadLab() {
+            try {
+                const res = await fetch(`${API_BASE}/lab/orders`, { headers: getAuthHeaders() });
+                const lab = await res.json();
+                const tbody = document.getElementById("labTableBody");
+                if (!Array.isArray(lab) || lab.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty-row">No lab orders found</td></tr>'; return; }
+                tbody.innerHTML = lab.map(l => {
+                    let patientName = l.patient?.name || l.patientName || '-';
+                    let patientAge = l.patient?.age || l.patientAge || '-';
+                    let patientPhone = l.patient?.phone || l.patientPhone || '-';
+                    if (l.sampleId && l.sampleId.includes('|')) {
+                        const parts = l.sampleId.split('|');
+                        patientName = parts[0] || patientName;
+                        patientAge = parts[1] || patientAge;
+                        patientPhone = parts[2] || patientPhone;
+                    }
+                    let testName = l.test?.name || l.testName || '-';
+                    if (l.status && l.status.startsWith('TEST:')) testName = l.status.substring(5);
+                    let statusDisplay = l.status;
+                    if (statusDisplay && statusDisplay.startsWith('TEST:')) statusDisplay = 'PAID';
+                    return `<tr><td>${l.id || '-'}</td><td>${patientName}</td><td>${patientAge}</td><td>${patientPhone}</td><td>${testName}</td><td><span class="status-pill">${statusDisplay || 'ORDERED'}</span></td><td>${l.orderedDate || l.date || '-'}</td></tr>`;
+                }).join('');
+            } catch (e) {
+                document.getElementById("labTableBody").innerHTML = '<tr><td colspan="7" class="empty-row">Unable to load lab orders</td></tr>';
+            }
+        }
+
+        validateSession();
+        loadLab();
+    </script>
+</body>
+</html>

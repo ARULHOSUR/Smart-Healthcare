@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy | Smart Healthcare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Trebuchet MS', 'Segoe UI', sans-serif; }
+        body {
+            min-height: 100vh;
+            color: #213251;
+            background:
+                radial-gradient(circle at 12% 14%, #f8fcff 0%, #e9f5ff 28%, rgba(233, 245, 255, 0) 55%),
+                radial-gradient(circle at 88% 82%, #e2f2ff 0%, #d6ecff 24%, rgba(214, 236, 255, 0) 52%),
+                linear-gradient(145deg, #fbfeff 0%, #edf7ff 44%, #f3faff 100%);
+        }
+
+        .scene { position: fixed; inset: 0; z-index: 0; pointer-events: none; perspective: 1400px; transform-style: preserve-3d; }
+        .floating-shapes { position: absolute; inset: 0; }
+        .shape { position: absolute; opacity: 0.34; filter: blur(0.4px); transform-style: preserve-3d; animation: float 16s ease-in-out infinite; }
+        .shape-1 { width: 420px; height: 420px; top: -10%; left: -8%; border-radius: 42% 58% 65% 35% / 38% 48% 52% 62%; background: linear-gradient(135deg, rgba(159, 230, 255, 0.9), rgba(111, 176, 255, 0.55)); box-shadow: 0 30px 70px rgba(111, 176, 255, 0.25); }
+        .shape-2 { width: 350px; height: 350px; top: 48%; right: -8%; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; background: linear-gradient(135deg, rgba(190, 242, 241, 0.9), rgba(118, 203, 250, 0.5)); box-shadow: 0 30px 70px rgba(118, 203, 250, 0.24); animation-delay: -6s; }
+        .shape-3 { width: 240px; height: 240px; bottom: 4%; left: 18%; border-radius: 50%; background: linear-gradient(135deg, rgba(194, 214, 255, 0.95), rgba(130, 166, 248, 0.55)); box-shadow: 0 24px 58px rgba(130, 166, 248, 0.24); animation-delay: -11s; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translate3d(18px, -28px, 60px) rotate(5deg); }
+            75% { transform: translate3d(-16px, 26px, 52px) rotate(-5deg); }
+        }
+
+        .navbar { position: fixed; top: 0; width: 100%; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.62); backdrop-filter: blur(15px); z-index: 100; border-bottom: 1px solid rgba(164, 198, 231, 0.45); box-shadow: 0 8px 30px rgba(132, 175, 216, 0.18); }
+        .logo { font-size: 22px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .logo i { color: #2aa9e8; }
+        .logo span { background: linear-gradient(135deg, #2398df, #2f7cf4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .cart-icon { position: relative; cursor: pointer; padding: 10px 20px; border-radius: 25px; background: rgba(198, 223, 245, 0.7); color: #29466b; border: 1px solid rgba(156, 194, 227, 0.65); }
+        .cart-icon .badge { position: absolute; top: -5px; right: -5px; background: #ff8f8f; color: #5f1f1f; border-radius: 50%; padding: 2px 8px; font-size: 12px; font-weight: 700; }
+
+        .main-content { padding: 100px 30px 30px; position: relative; z-index: 1; }
+
+        .patient-search-section, .medicine-card, .search-bar input, .category-tab, .cart-item, .cart-sidebar, .search-section {
+            border: 1px solid rgba(170, 201, 230, 0.58);
+            box-shadow: 0 18px 42px rgba(129, 172, 211, 0.14);
+        }
+
+        .patient-search-section { background: rgba(255,255,255,0.72); border-radius: 20px; padding: 25px; margin-bottom: 30px; }
+        .patient-search-section h4 { color: #1f8fd8; margin-bottom: 15px; }
+        .patient-search-row { display: flex; gap: 15px; flex-wrap: wrap; }
+        .patient-search-row input { flex: 1; min-width: 200px; padding: 12px 20px; background: rgba(255,255,255,0.88); border: 1px solid rgba(167, 201, 233, 0.75); border-radius: 10px; color: #1f3557; font-size: 14px; }
+        .patient-search-row input:focus { outline: none; border-color: #74bde9; box-shadow: 0 0 0 4px rgba(116,189,233,0.2); }
+        .patient-search-row button { padding: 12px 25px; background: linear-gradient(135deg, #39c4ee, #3a82f2); border: none; border-radius: 10px; color: #082645; cursor: pointer; font-weight: 700; }
+
+        .prescribed-medicines { margin-top: 20px; display: none; }
+        .prescribed-medicines.show { display: block; }
+        .prescribed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .prescribed-header h5 { color: #2abca6; }
+        .prescribed-list { display: flex; flex-direction: column; gap: 10px; }
+        .prescribed-item { display: flex; justify-content: space-between; align-items: center; background: rgba(176, 235, 223, 0.36); padding: 15px; border-radius: 10px; border: 1px solid rgba(129, 207, 188, 0.58); }
+        .prescribed-item-info h6 { margin-bottom: 5px; }
+        .prescribed-item-info p { font-size: 12px; opacity: 0.8; margin: 0; color: #53708f; }
+        .prescribed-item button { padding: 8px 15px; background: linear-gradient(135deg, #6ee0cf, #65bff1); border: none; border-radius: 8px; color: #0a334f; cursor: pointer; font-size: 13px; font-weight: 700; }
+
+        .search-bar { max-width: 600px; margin: 0 auto 30px; position: relative; }
+        .search-bar input { width: 100%; padding: 15px 50px 15px 25px; background: rgba(255,255,255,0.88); border-radius: 30px; color: #1f3557; font-size: 16px; }
+        .search-bar input:focus { outline: none; border-color: #74bde9; }
+        .search-bar i { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: #1f8fd8; }
+
+        .category-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        .category-tab { padding: 10px 25px; background: rgba(255,255,255,0.66); border-radius: 25px; cursor: pointer; transition: 0.3s; }
+        .category-tab:hover, .category-tab.active { background: rgba(157, 208, 241, 0.35); border-color: #84c3ef; color: #1a4f7a; }
+
+        .medicines-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+
+        .medicine-card { background: rgba(255,255,255,0.72); border-radius: 20px; padding: 20px; transition: 0.3s; }
+        .medicine-card:hover { transform: translateY(-6px); box-shadow: 0 24px 56px rgba(91, 161, 224, 0.22); border-color: #84c3ef; }
+        .medicine-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #74cff0, #6ba7f5); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 15px; color: #15395f; }
+        .medicine-card h4 { margin-bottom: 5px; font-size: 16px; }
+        .medicine-card .category { color: #1f8fd8; font-size: 12px; margin-bottom: 10px; }
+        .medicine-card .price { font-size: 20px; font-weight: bold; color: #2abca6; margin-bottom: 10px; }
+        .medicine-card .stock { font-size: 12px; color: #d38a43; margin-bottom: 15px; }
+        .medicine-card .manufacturer { font-size: 11px; opacity: 0.8; margin-bottom: 10px; color: #5b6f8c; }
+
+        .add-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, #39c4ee, #3a82f2); border: none; border-radius: 10px; color: #082645; cursor: pointer; transition: 0.3s; font-weight: 700; }
+        .add-btn:hover { transform: scale(1.02); box-shadow: 0 10px 30px rgba(87,169,231,0.34); }
+
+        .cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100vh; background: rgba(247, 252, 255, 0.98); z-index: 200; padding: 30px; transition: 0.4s; overflow-y: auto; border-left: 1px solid rgba(168, 200, 230, 0.55); color: #213251; }
+        .cart-sidebar.show { right: 0; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(166, 198, 228, 0.35); }
+        .close-cart { background: none; border: none; color: #34557f; font-size: 24px; cursor: pointer; }
+
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.76); border-radius: 10px; margin-bottom: 10px; }
+        .cart-item-info h5 { font-size: 14px; margin-bottom: 5px; }
+        .cart-item-info p { font-size: 12px; color: #1f8fd8; }
+        .cart-item-actions { display: flex; align-items: center; gap: 10px; }
+        .qty-btn { width: 30px; height: 30px; border: none; border-radius: 5px; background: rgba(157, 208, 241, 0.35); color: #1f8fd8; cursor: pointer; }
+        .remove-btn { background: none; border: none; color: #dd6d6d; cursor: pointer; font-size: 18px; }
+
+        .cart-footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(166, 198, 228, 0.35); }
+        .cart-total { display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+        .cart-total span { color: #2abca6; }
+        .checkout-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #6ee0cf, #65bff1); border: none; border-radius: 10px; color: #0a334f; font-size: 16px; font-weight: bold; cursor: pointer; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(98, 138, 178, 0.26); z-index: 150; display: none; }
+        .overlay.show { display: block; }
+
+        .empty-cart { text-align: center; padding: 40px; opacity: 0.75; color: #5d7290; }
+        .empty-cart i { font-size: 50px; color: #1f8fd8; margin-bottom: 15px; }
+
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #6ee0cf; color: #0a334f; padding: 15px 30px; border-radius: 10px; font-weight: bold; z-index: 300; display: none; box-shadow: 0 15px 30px rgba(95,178,164,0.3); }
+        .toast.show { display: block; animation: fadeInOut 2s; }
+
+        @keyframes fadeInOut { 0% { opacity: 0; transform: translateX(-50%) translateY(20px); } 20% { opacity: 1; transform: translateX(-50%) translateY(0); } 80% { opacity: 1; } 100% { opacity: 0; } }
+        
+        @media (max-width: 768px) {
+            .cart-sidebar { width: 100%; right: -100%; }
+            .medicines-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="scene">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo" style="cursor:pointer" onclick="window.location.href='admin.html'"><i class="fas fa-heartbeat"></i><span>Smart Pharmacy</span></div>
+        <div style="display:flex;align-items:center;gap:15px;">
+            <button onclick="window.location.href='admin.html'" style="padding:8px 20px;background:linear-gradient(135deg,#39c4ee,#3a82f2);border:none;border-radius:20px;color:#082645;cursor:pointer;font-weight:700;">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="cart-icon" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="badge" id="cartCount">0</span>
+        </div>
+    </nav>
+
+    <div class="main-content">
+
+        <div class="patient-search-section">
+            <h4><i class="fas fa-user-md"></i> Find Prescribed Medicines</h4>
+            <div class="patient-search-row">
+                <input type="text" id="patientNameInput" placeholder="Enter Patient Name to find prescribed medicines...">
+                <button onclick="searchPrescribedMedicines()">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+            <div class="prescribed-medicines" id="prescribedMedicines">
+                <div class="prescribed-header">
+                    <h5><i class="fas fa-prescription"></i> Prescribed Medicines</h5>
+                    <button onclick="addAllPrescribed()" style="padding: 8px 15px; background: linear-gradient(135deg, #00ff88, #00e5ff); border: none; border-radius: 8px; color: #0a0a0a; cursor: pointer;">
+                        <i class="fas fa-cart-plus"></i> Add All to Cart
+                    </button>
+                </div>
+                <div class="prescribed-list" id="prescribedList"></div>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search medicines..." onkeyup="filterMedicines()">
+            <i class="fas fa-search"></i>
+        </div>
+
+        <div class="category-tabs">
+            <div class="category-tab active" onclick="filterCategory('all')">All</div>
+            <div class="category-tab" onclick="filterCategory('pain')">Pain Relief</div>
+            <div class="category-tab" onclick="filterCategory('antibiotic')">Antibiotics</div>
+            <div class="category-tab" onclick="filterCategory('diabetes')">Diabetes</div>
+            <div class="category-tab" onclick="filterCategory('cardiac')">Cardiac</div>
+            <div class="category-tab" onclick="filterCategory('gastro')">Gastro</div>
+            <div class="category-tab" onclick="filterCategory('respiratory')">Respiratory</div>
+            <div class="category-tab" onclick="filterCategory('derma')">Skin Care</div>
+            <div class="category-tab" onclick="filterCategory('vitamin')">Vitamins</div>
+            <div class="category-tab" onclick="filterCategory('eye')">Eye Care</div>
+        </div>
+
+        <div class="medicines-grid" id="medicinesGrid"></div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleCart()"></div>
+
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        
+        <div id="cartItems">
+            <div class="empty-cart"><i class="fas fa-shopping-basket"></i><p>Your cart is empty</p></div>
+        </div>
+
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-total">Total: <span id="cartTotal">₹0</span></div>
+            <button class="checkout-btn" onclick="checkout()">
+                <i class="fas fa-credit-card"></i> Proceed to Pay
+            </button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Added to cart!</div>
+
+    <script>
+        const API_BASE = "/api";
+        
+        const medicines = [
+            // Pain Relief
+            { id: 1, name: "Paracetamol 500mg", category: "pain", price: 25, stock: 500, manufacturer: "GSK" },
+            { id: 2, name: "Paracetamol 650mg", category: "pain", price: 35, stock: 400, manufacturer: "GSK" },
+            { id: 3, name: "Ibuprofen 400mg", category: "pain", price: 30, stock: 350, manufacturer: "Abbott" },
+            { id: 4, name: "Aspirin 325mg", category: "pain", price: 20, stock: 300, manufacturer: "Bayer" },
+            { id: 5, name: "Diclofenac 50mg", category: "pain", price: 45, stock: 250, manufacturer: "Novartis" },
+            { id: 6, name: "Naproxen 500mg", category: "pain", price: 55, stock: 200, manufacturer: "Dr. Reddy's" },
+            { id: 7, name: "Tramadol 50mg", category: "pain", price: 80, stock: 100, manufacturer: "Sun Pharma" },
+            { id: 8, name: "Combiflam", category: "pain", price: 30, stock: 400, manufacturer: "GSK" },
+            { id: 9, name: "Dolopyrin", category: "pain", price: 25, stock: 300, manufacturer: "Bayer" },
+            { id: 10, name: "Crocin 500mg", category: "pain", price: 20, stock: 500, manufacturer: "GSK" },
+            
+            // Antibiotics
+            { id: 11, name: "Azithromycin 500mg", category: "antibiotic", price: 85, stock: 200, manufacturer: "Cipla" },
+            { id: 12, name: "Amoxicillin 500mg", category: "antibiotic", price: 65, stock: 250, manufacturer: "GSK" },
+            { id: 13, name: "Augmentin 625mg", category: "antibiotic", price: 150, stock: 150, manufacturer: "GSK" },
+            { id: 14, name: "Ciprofloxacin 500mg", category: "antibiotic", price: 70, stock: 180, manufacturer: "Cipla" },
+            { id: 15, name: "Ofloxacin 400mg", category: "antibiotic", price: 60, stock: 200, manufacturer: "Dr. Reddy's" },
+            { id: 16, name: "Metronidazole 400mg", category: "antibiotic", price: 45, stock: 220, manufacturer: "Sun Pharma" },
+            { id: 17, name: "Doxycycline 100mg", category: "antibiotic", price: 55, stock: 180, manufacturer: "Abbott" },
+            { id: 18, name: "Cefixime 200mg", category: "antibiotic", price: 120, stock: 150, manufacturer: "Cipla" },
+            { id: 19, name: "Ceftriaxone 1g Injection", category: "antibiotic", price: 180, stock: 80, manufacturer: "Sun Pharma" },
+            { id: 20, name: "Azithromycin 250mg", category: "antibiotic", price: 55, stock: 250, manufacturer: "Cipla" },
+            
+            // Diabetes
+            { id: 21, name: "Metformin 500mg", category: "diabetes", price: 45, stock: 400, manufacturer: "USV" },
+            { id: 22, name: "Metformin 1000mg", category: "diabetes", price: 65, stock: 300, manufacturer: "USV" },
+            { id: 23, name: "Glimepiride 1mg", category: "diabetes", price: 50, stock: 250, manufacturer: "Sun Pharma" },
+            { id: 24, name: "Glimepiride 2mg", category: "diabetes", price: 70, stock: 200, manufacturer: "Sun Pharma" },
+            { id: 25, name: "Gliclazide 80mg", category: "diabetes", price: 55, stock: 220, manufacturer: "Cipla" },
+            { id: 26, name: "Voglibose 0.3mg", category: "diabetes", price: 60, stock: 180, manufacturer: "Abbott" },
+            { id: 27, name: "Pioglitazone 15mg", category: "diabetes", price: 80, stock: 150, manufacturer: "Sun Pharma" },
+            { id: 28, name: "Sitagliptin 50mg", category: "diabetes", price: 120, stock: 120, manufacturer: "Merck" },
+            { id: 29, name: "Linagliptin 5mg", category: "diabetes", price: 100, stock: 100, manufacturer: "Boehringer" },
+            { id: 30, name: "Glucobay 50mg", category: "diabetes", price: 90, stock: 130, manufacturer: "Bayer" },
+            
+            // Cardiac
+            { id: 31, name: "Amlodipine 5mg", category: "cardiac", price: 35, stock: 300, manufacturer: "Cipla" },
+            { id: 32, name: "Amlodipine 10mg", category: "cardiac", price: 50, stock: 250, manufacturer: "Cipla" },
+            { id: 33, name: "Metoprolol 25mg", category: "cardiac", price: 45, stock: 220, manufacturer: "Abbott" },
+            { id: 34, name: "Metoprolol 50mg", category: "cardiac", price: 60, stock: 200, manufacturer: "Abbott" },
+            { id: 35, name: "Atenolol 50mg", category: "cardiac", price: 40, stock: 250, manufacturer: "GSK" },
+            { id: 36, name: "Losartan 50mg", category: "cardiac", price: 55, stock: 280, manufacturer: "Cipla" },
+            { id: 37, name: "Telmisartan 40mg", category: "cardiac", price: 65, stock: 240, manufacturer: "Cipla" },
+            { id: 38, name: "Ramipril 5mg", category: "cardiac", price: 70, stock: 180, manufacturer: "Sanofi" },
+            { id: 39, name: "Rosuvastatin 10mg", category: "cardiac", price: 90, stock: 200, manufacturer: "Cipla" },
+            { id: 40, name: "Atorvastatin 20mg", category: "cardiac", price: 80, stock: 220, manufacturer: "Dr. Reddy's" },
+            
+            // Gastro
+            { id: 41, name: "Omeprazole 20mg", category: "gastro", price: 35, stock: 400, manufacturer: "Cipla" },
+            { id: 42, name: "Omeprazole 40mg", category: "gastro", price: 50, stock: 300, manufacturer: "Cipla" },
+            { id: 43, name: "Pantoprazole 40mg", category: "gastro", price: 60, stock: 280, manufacturer: "Sun Pharma" },
+            { id: 44, name: "Rabeprazole 20mg", category: "gastro", price: 70, stock: 220, manufacturer: "Cipla" },
+            { id: 45, name: "Domperidone 10mg", category: "gastro", price: 25, stock: 350, manufacturer: "Abbott" },
+            { id: 46, name: "Ondansetron 4mg", category: "gastro", price: 40, stock: 250, manufacturer: "Cipla" },
+            { id: 47, name: "Pantoprazole 40mg Injection", category: "gastro", price: 150, stock: 100, manufacturer: "Sun Pharma" },
+            { id: 48, name: "Ranitidine 150mg", category: "gastro", price: 20, stock: 300, manufacturer: "GSK" },
+            { id: 49, name: "Famotidine 20mg", category: "gastro", price: 25, stock: 280, manufacturer: "Dr. Reddy's" },
+            { id: 50, name: "Pan-D (Omeprazole + Domperidone)", category: "gastro", price: 95, stock: 200, manufacturer: "Cipla" },
+            
+            // Respiratory
+            { id: 51, name: "Cetirizine 10mg", category: "respiratory", price: 20, stock: 500, manufacturer: "Cipla" },
+            { id: 52, name: "Levocetirizine 5mg", category: "respiratory", price: 45, stock: 300, manufacturer: "Abbott" },
+            { id: 53, name: "Loratadine 10mg", category: "respiratory", price: 25, stock: 350, manufacturer: "GSK" },
+            { id: 54, name: "Montelukast 10mg", category: "respiratory", price: 80, stock: 250, manufacturer: "Cipla" },
+            { id: 55, name: "Montelukast 5mg", category: "respiratory", price: 60, stock: 220, manufacturer: "Cipla" },
+            { id: 56, name: "Salbutamol Inhaler", category: "respiratory", price: 350, stock: 100, manufacturer: "Cipla" },
+            { id: 57, name: "Budesonide Inhaler", category: "respiratory", price: 450, stock: 80, manufacturer: "Cipla" },
+            { id: 58, name: "Phenylephrine Drops", category: "respiratory", price: 35, stock: 200, manufacturer: "Sun Pharma" },
+            { id: 59, name: "Xylometazoline Nasal Drops", category: "respiratory", price: 30, stock: 250, manufacturer: "GSK" },
+            { id: 60, name: "Ambroxol 30mg", category: "respiratory", price: 40, stock: 280, manufacturer: "Cipla" },
+            
+            // Skin Care
+            { id: 61, name: "Clobetasol Ointment", category: "derma", price: 120, stock: 150, manufacturer: "Glaxo" },
+            { id: 62, name: "Mometasone Cream", category: "derma", price: 140, stock: 120, manufacturer: "Cipla" },
+            { id: 63, name: "Hydrocortisone Cream", category: "derma", price: 55, stock: 200, manufacturer: "GSK" },
+            { id: 64, name: "Fluconazole Cream", category: "derma", price: 80, stock: 150, manufacturer: "Cipla" },
+            { id: 65, name: "Clotrimazole Cream", category: "derma", price: 45, stock: 250, manufacturer: "Bayer" },
+            { id: 66, name: "Mupirocin Ointment", category: "derma", price: 70, stock: 180, manufacturer: "Glaxo" },
+            { id: 67, name: "Silver Sulfadiazine Cream", category: "derma", price: 90, stock: 120, manufacturer: "Sun Pharma" },
+            { id: 68, name: "Adapalene Gel", category: "derma", price: 150, stock: 100, manufacturer: "Galderma" },
+            { id: 69, name: "Benzoyl Peroxide Gel", category: "derma", price: 120, stock: 110, manufacturer: "GSK" },
+            { id: 70, name: "Moisturizing Cream", category: "derma", price: 150, stock: 200, manufacturer: "Hindustan" },
+            
+            // Vitamins
+            { id: 71, name: "Vitamin D3 1000IU", category: "vitamin", price: 60, stock: 400, manufacturer: "Abbott" },
+            { id: 72, name: "Vitamin D3 2000IU", category: "vitamin", price: 80, stock: 350, manufacturer: "Abbott" },
+            { id: 73, name: "Vitamin B12 500mcg", category: "vitamin", price: 40, stock: 300, manufacturer: "Sun Pharma" },
+            { id: 74, name: "Vitamin B Complex", category: "vitamin", price: 35, stock: 400, manufacturer: "Cipla" },
+            { id: 75, name: "Folic Acid 5mg", category: "vitamin", price: 25, stock: 350, manufacturer: "GSK" },
+            { id: 76, name: "Iron Tablets", category: "vitamin", price: 30, stock: 300, manufacturer: "Abbott" },
+            { id: 77, name: "Calcium + Vitamin D", category: "vitamin", price: 70, stock: 280, manufacturer: "GSK" },
+            { id: 78, name: "Zinc Tablets", category: "vitamin", price: 25, stock: 400, manufacturer: "Cipla" },
+            { id: 79, name: "Multivitamin Syrup", category: "vitamin", price: 120, stock: 150, manufacturer: "GSK" },
+            { id: 80, name: "Biotin 10mg", category: "vitamin", price: 90, stock: 180, manufacturer: "Abbott" },
+            
+            // Eye Care
+            { id: 81, name: "Tears Plus Drops", category: "eye", price: 80, stock: 200, manufacturer: "Allergan" },
+            { id: 82, name: "Refresh Tears Drops", category: "eye", price: 120, stock: 150, manufacturer: "Allergan" },
+            { id: 83, name: "Ofloxacin Eye Drops", category: "eye", price: 45, stock: 250, manufacturer: "Cipla" },
+            { id: 84, name: "Ciprofloxacin Eye Drops", category: "eye", price: 50, stock: 200, manufacturer: "Sun Pharma" },
+            { id: 85, name: "Timolol Eye Drops", category: "eye", price: 90, stock: 100, manufacturer: "Cipla" },
+            { id: 86, name: "Brinzolamide Eye Drops", category: "eye", price: 150, stock: 80, manufacturer: "Cipla" },
+            { id: 87, name: "Prednisolone Eye Drops", category: "eye", price: 60, stock: 150, manufacturer: "Allergan" },
+            { id: 88, name: "Ketorolac Eye Drops", category: "eye", price: 70, stock: 120, manufacturer: "Sun Pharma" },
+            { id: 89, name: "Tobramycin Eye Drops", category: "eye", price: 55, stock: 180, manufacturer: "Cipla" },
+            { id: 90, name: "Systane Ultra Drops", category: "eye", price: 200, stock: 100, manufacturer: "Alcon" }
+        ];
+
+        let cart = [];
+        let currentFilter = 'all';
+        let prescribedMeds = [];
+
+        function getAuthHeaders() {
+            const token = sessionStorage.getItem("hms_token") || localStorage.getItem("hms_token");
+            return {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            };
+        }
+
+        async function searchPrescribedMedicines() {
+            const patientName = document.getElementById('patientNameInput').value.trim();
+            if (!patientName) {
+                showToast('Please enter patient name');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/emr`, { headers: getAuthHeaders() });
+                const text = await res.text();
+                const emrList = (text && text.trim()) ? JSON.parse(text) : [];
+                
+                // Filter EMRs by patient name
+                const matchingEMRs = emrList.filter(e => {
+                    const pName = e.patient ? e.patient.name : '';
+                    return pName.toLowerCase().includes(patientName.toLowerCase());
+                });
+
+                const prescribedDiv = document.getElementById('prescribedMedicines');
+                const prescribedList = document.getElementById('prescribedList');
+                
+                if (matchingEMRs.length === 0) {
+                    showToast('No prescriptions found for this patient');
+                    prescribedDiv.classList.remove('show');
+                    return;
+                }
+
+                // Extract medicines from treatmentPlan/notes
+                prescribedMeds = [];
+                matchingEMRs.forEach(emr => {
+                    const treatment = emr.treatmentPlan || emr.treatment || '';
+                    const notes = emr.notes || '';
+                    const fullText = treatment + ' ' + notes;
+                    
+                    // Match medicine names from our inventory
+                    medicines.forEach(med => {
+                        if (fullText.toLowerCase().includes(med.name.toLowerCase().split(' ')[0])) {
+                            if (!prescribedMeds.find(m => m.id === med.id)) {
+                                prescribedMeds.push(med);
+                            }
+                        }
+                    });
+                });
+
+                if (prescribedMeds.length === 0) {
+                    showToast('No matching medicines found in inventory');
+                    prescribedDiv.classList.remove('show');
+                    return;
+                }
+
+                prescribedList.innerHTML = prescribedMeds.map(med => `
+                    <div class="prescribed-item">
+                        <div class="prescribed-item-info">
+                            <h6>${med.name}</h6>
+                            <p>${med.manufacturer} | ${med.category.toUpperCase()}</p>
+                        </div>
+                        <button onclick="addToCart(${med.id})">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                `).join('');
+
+                prescribedDiv.classList.add('show');
+                showToast(`Found ${prescribedMeds.length} prescribed medicines`);
+
+            } catch (e) {
+                console.error('Error searching prescriptions:', e);
+                showToast('Error searching prescriptions');
+            }
+        }
+
+        function addAllPrescribed() {
+            prescribedMeds.forEach(med => addToCart(med.id, false));
+            showToast('All prescribed medicines added to cart!');
+        }
+
+        function renderMedicines(filteredMedicines = medicines) {
+            const grid = document.getElementById('medicinesGrid');
+            grid.innerHTML = filteredMedicines.map(med => `
+                <div class="medicine-card">
+                    <div class="medicine-icon"><i class="fas fa-pills"></i></div>
+                    <h4>${med.name}</h4>
+                    <div class="manufacturer">${med.manufacturer}</div>
+                    <div class="category">${med.category.toUpperCase()}</div>
+                    <div class="price">₹${med.price}</div>
+                    <div class="stock"><i class="fas fa-box"></i> ${med.stock} available</div>
+                    <button class="add-btn" onclick="addToCart(${med.id})">
+                        <i class="fas fa-plus"></i> Add to Cart
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(category) {
+            currentFilter = category;
+            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (category === 'all') {
+                renderMedicines(medicines);
+            } else {
+                const filtered = medicines.filter(m => m.category === category);
+                renderMedicines(filtered);
+            }
+        }
+
+        function filterMedicines() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = medicines;
+            
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(m => m.category === currentFilter);
+            }
+            
+            if (query) {
+                filtered = filtered.filter(m => m.name.toLowerCase().includes(query) || m.manufacturer.toLowerCase().includes(query));
+            }
+            
+            renderMedicines(filtered);
+        }
+
+        function addToCart(id, showMsg = true) {
+            const medicine = medicines.find(m => m.id === id);
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                if (existingItem.qty < medicine.stock) {
+                    existingItem.qty++;
+                } else {
+                    showToast('Maximum quantity reached!');
+                    return;
+                }
+            } else {
+                cart.push({ ...medicine, qty: 1 });
+            }
+            
+            updateCartUI();
+            if (showMsg) {
+                showToast(medicine.name + ' added to cart!');
+            }
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+        }
+
+        function updateQty(id, change) {
+            const item = cart.find(i => i.id === id);
+            const medicine = medicines.find(m => m.id === id);
+            
+            if (item) {
+                const newQty = item.qty + change;
+                if (newQty > 0 && newQty <= medicine.stock) {
+                    item.qty = newQty;
+                } else if (newQty <= 0) {
+                    removeFromCart(id);
+                    return;
+                }
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cartCount').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+            
+            const cartItems = document.getElementById('cartItems');
+            const cartFooter = document.getElementById('cartFooter');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="empty-cart"><i class="fas fa-shopping-basket"></i><p>Your cart is empty</p></div>';
+                cartFooter.style.display = 'none';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h5>${item.name}</h5>
+                            <p>₹${item.price} each</p>
+                        </div>
+                        <div class="cart-item-actions">
+                            <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                            <span>${item.qty}</span>
+                            <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                            <button class="remove-btn" onclick="removeFromCart(${item.id})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+                document.getElementById('cartTotal').innerText = '₹' + total;
+                cartFooter.style.display = 'block';
+            }
+        }
+
+        function toggleCart() {
+            document.getElementById('cartSidebar').classList.toggle('show');
+            document.getElementById('overlay').classList.toggle('show');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                showToast('Cart is empty!');
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            // Store cart data for payment page
+            localStorage.setItem('pharmacyCart', JSON.stringify(cart));
+            localStorage.setItem('pharmacyTotal', total);
+            
+            // Redirect to payment page
+            window.location.href = 'payment.html';
+        }
+
+        // Initialize
+        renderMedicines();
+    </script>
+</body>
+</html>

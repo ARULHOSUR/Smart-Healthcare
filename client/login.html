@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Healthcare | Secure Login</title>
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="scene" aria-hidden="rue">
+        <div class="mesh mesh-a"></div>
+        <div class="mesh mesh-b"></div>
+        <div class="mesh mesh-c"></div>
+        <div class="grid-plane"></div>
+    </div>
+
+    <div class="hero">
+        <img src="assets/logo.png" alt="Smart Healthcare Logo" class="hero-logo" onerror="this.style.display='none'">
+        <h1>
+            Smart<br>
+            Healthcare
+        </h1>
+        <p>Smart • Secure • Digital Healthcare</p>
+        <button id="openLogin" type="button">Enter System</button>
+    </div>
+
+    <div class="login-panel" id="loginPanel">
+        <h2>Secure Login</h2>
+
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+
+        <div class="captcha">
+            <span id="captchaText"></span>
+            <button type="button" class="captcha-refresh" onclick="generateCaptcha()">↻</button>
+        </div>
+
+        <input type="text" id="captchaInput" placeholder="Enter Captcha" required>
+        <div id="error" class="error-text"></div>
+        <button type="button" onclick="login()">Login</button>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>
