@@ -70,8 +70,8 @@ The system follows a **client-server architecture**:
 
 ## 🗄 Database
 
-- Default database: **H2**
-- Supports migration to **MySQL**
+- Default database: **MySQL**
+- Supports migration to **H2**
 - Stores patient records, doctor details, appointments, and billing data
 
 ---
