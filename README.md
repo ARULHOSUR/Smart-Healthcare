@@ -1,8 +1,8 @@
-# 🏥 Hospital Management System (HMS) – Full Stack Project
+# 🏥 SmartHealth care – Full Stack Project
 
 ## 📘 Abstract
 
-The **Hospital Management System (HMS)** is a full-stack web application developed to automate and manage the daily operations of a hospital.  
+The **SmartHealth care** is a full-stack web application developed to automate and manage the daily operations of a hospital.  
 The system provides an efficient way to handle patient records, doctor information, appointment scheduling, billing, and medical records through a centralized digital platform.
 
 This project reduces paperwork, minimizes human errors, improves data security, and enhances overall hospital efficiency by providing real-time access to information.
@@ -27,7 +27,7 @@ This project reduces paperwork, minimizes human errors, improves data security, 
 - Spring Data JPA
 - Spring Security
 - RESTful APIs
-- H2 / MySQL Database
+- MySQL Database
 
 ### Frontend
 - React.js
